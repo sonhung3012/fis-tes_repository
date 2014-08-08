@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+</h:head>
+<h:body>
+	<h1>Table PrimeFaces</h1>
+
+<h:form id="form">
+    <p:growl id="msgs" showDetail="true" />
+ 
+    <p:dataTable id="basicDT" var="car" value="#{dtSelectionView.cars1}">
+        <f:facet name="header">
+            Basic
+        </f:facet>
+        <p:column headerText="Id">
+            <h:outputText value="#{car.model}" />
+        </p:column>
+        <p:column headerText="Year">
+            <h:outputText value="#{car.year}" />
+        </p:column>
+        <p:column headerText="Brand">
+            <h:outputText value="#{car.manufacturer}" />
+        </p:column>
+        <p:column headerText="Color">
+            <h:outputText value="#{car.color}" />
+        </p:column>
+        <p:column style="width:32px;text-align: center">
+             <p:commandButton update=":form:carDetail" oncomplete="PF('carDialog').show()" icon="ui-icon-search" title="View">
+                <f:setPropertyActionListener value="#{car}" target="#{dtSelectionView.selectedCar}" />
+            </p:commandButton>
+        </p:column>
+    </p:dataTable>
+ 
+    <p:dataTable id="singleDT" var="car" value="#{dtSelectionView.cars2}" selectionMode="single" selection="#{dtSelectionView.selectedCar}" rowKey="#{car.model}">
+        <f:facet name="header">
+            Single with Row Click
+        </f:facet>
+        <p:column headerText="Id">
+            <h:outputText value="#{car.model}" />
+        </p:column>
+        <p:column headerText="Year">
+            <h:outputText value="#{car.year}" />
+        </p:column>
+        <p:column headerText="Brand">
+            <h:outputText value="#{car.manufacturer}" />
+        </p:column>
+        <p:column headerText="Color">
+            <h:outputText value="#{car.color}" />
+        </p:column>
+        <f:facet name="footer">
+            <p:commandButton process="singleDT" update=":form:carDetail" icon="ui-icon-search" value="View" oncomplete="PF('carDialog').show()" />
+        </f:facet>
+    </p:dataTable>
+ 
+    <p:dataTable id="eventsDT" var="car" value="#{dtSelectionView.cars3}" selectionMode="single" selection="#{dtSelectionView.selectedCar}" rowKey="#{car.model}">
+        <f:facet name="header">
+            Select Events
+        </f:facet>
+        <p:ajax event="rowSelect" listener="#{dtSelectionView.onRowSelect}" update=":form:msgs" />
+        <p:ajax event="rowUnselect" listener="#{dtSelectionView.onRowUnselect}" update=":form:msgs" />
+        <p:column headerText="Id">
+            <h:outputText value="#{car.model}" />
+        </p:column>
+        <p:column headerText="Year">
+            <h:outputText value="#{car.year}" />
+        </p:column>
+        <p:column headerText="Brand">
+            <h:outputText value="#{car.manufacturer}" />
+        </p:column>
+        <p:column headerText="Color">
+            <h:outputText value="#{car.color}" />
+        </p:column>
+    </p:dataTable>
+ 
+    <p:dataTable id="multipleDT" var="car" value="#{dtSelectionView.cars4}" selectionMode="multiple" selection="#{dtSelectionView.selectedCars}" rowKey="#{car.model}">
+        <f:facet name="header">
+            Multiple with Meta and Shift keys
+        </f:facet>
+        <p:column headerText="Id">
+            <h:outputText value="#{car.model}" />
+        </p:column>
+        <p:column headerText="Year">
+            <h:outputText value="#{car.year}" />
+        </p:column>
+        <p:column headerText="Brand">
+            <h:outputText value="#{car.manufacturer}" />
+        </p:column>
+        <p:column headerText="Color">
+            <h:outputText value="#{car.color}" />
+        </p:column>
+        <f:facet name="footer">
+            <p:commandButton process="multipleDT" update=":form:multiCarDetail" icon="ui-icon-search" value="View" oncomplete="PF('multiCarDialog').show()" />
+        </f:facet>
+    </p:dataTable>
+ 
+    <p:dataTable id="radioDT" var="car" value="#{dtSelectionView.cars5}" selection="#{dtSelectionView.selectedCar}" rowKey="#{car.model}">
+        <f:facet name="header">
+            RadioButton
+        </f:facet>
+        <p:column selectionMode="single" style="width:16px;text-align:center"/>
+        <p:column headerText="Id">
+            <h:outputText value="#{car.model}" />
+        </p:column>
+        <p:column headerText="Year">
+            <h:outputText value="#{car.year}" />
+        </p:column>
+        <p:column headerText="Brand">
+            <h:outputText value="#{car.manufacturer}" />
+        </p:column>
+        <p:column headerText="Color">
+            <h:outputText value="#{car.color}" />
+        </p:column>
+        <f:facet name="footer">
+            <p:commandButton process="radioDT" update=":form:carDetail" icon="ui-icon-search" value="View" oncomplete="PF('carDialog').show()" />
+        </f:facet>
+    </p:dataTable>
+ 
+    <p:dataTable id="checkboxDT" var="car" value="#{dtSelectionView.cars6}" selection="#{dtSelectionView.selectedCars}" rowKey="#{car.model}" style="margin-bottom:0">
+        <f:facet name="header">
+            Checkbox
+        </f:facet>
+        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+        <p:column headerText="Id">
+            <h:outputText value="#{car.model}" />
+        </p:column>
+        <p:column headerText="Year">
+            <h:outputText value="#{car.year}" />
+        </p:column>
+        <p:column headerText="Brand">
+            <h:outputText value="#{car.manufacturer}" />
+        </p:column>
+        <p:column headerText="Color">
+            <h:outputText value="#{car.color}" />
+        </p:column>
+        <f:facet name="footer">
+            <p:commandButton process="checkboxDT" update=":form:multiCarDetail" icon="ui-icon-search" value="View" oncomplete="PF('multiCarDialog').show()" />
+        </f:facet>
+    </p:dataTable>
+ 
+    <p:dialog header="Car Info" widgetVar="carDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+        <p:outputPanel id="carDetail" style="text-align:center;">
+            <p:panelGrid  columns="2" rendered="#{not empty dtSelectionView.selectedCar}" columnClasses="label,value">
+                <f:facet name="header">
+                    <p:graphicImage name="demo/images/car/#{dtSelectionView.selectedcar.manufacturer}-big.gif"/>
+                </f:facet>
+ 
+                <h:outputText value="Id:" />
+                <h:outputText value="#{dtSelectionView.selectedcar.model}" />
+ 
+                <h:outputText value="Year" />
+                <h:outputText value="#{dtSelectionView.selectedCar.year}" />
+ 
+                <h:outputText value="Color:" />
+                <h:outputText value="#{dtSelectionView.selectedCar.color}" style="color:#{dtSelectionView.selectedCar.color}"/>
+ 
+                <h:outputText value="Price" />
+                <h:outputText value="$#{dtSelectionView.selectedCar.price}" />
+            </p:panelGrid>
+        </p:outputPanel>
+    </p:dialog>
+ 
+    <p:dialog header="Selected Cars" widgetVar="multiCarDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="200">
+        <p:outputPanel id="multiCarDetail" style="text-align:center;">
+            <ui:repeat value="#{dtSelectionView.selectedCars}" var="car">
+                <h:outputText value="#{car.model} - #{car.manufacturer}" style="display:block"/>
+            </ui:repeat>
+        </p:outputPanel>
+    </p:dialog>
+</h:form>
+</h:body>
+</html>
