@@ -6,12 +6,12 @@ public class Car implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	public String model;
-	public int year;
-	public String manufacturer;
-	public String color;
-    public int price;
-    public boolean sold;
+	private String model;
+	private int year;
+	private String manufacturer;
+	private String color;
+    private int price;
+    private boolean sold;
 
     public Car(String model, int year, String manufacturer, String color) {
 		this.model = model;
