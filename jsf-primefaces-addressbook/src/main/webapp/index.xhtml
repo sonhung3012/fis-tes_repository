@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Addressbook Demo</title>
+</h:head>
+<h:body>
+	
+	<p:layout fullPage="true">
+	
+		<p:layoutUnit position="west" size="300" header="Contact Groups" resizable="true" closable="false" collapsible="true">
+			<h:form id="treeform">
+			    <p:growl id="contacttree" showDetail="true" />
+			    <p:tree id="treeDT" value="#{contactsView.root}" var="contact" selectionMode="single" selection="#{contactsView.selectedNode}"
+			    	draggable="true" droppable="true" dragdropScope="demo">
+			    	
+			        <p:ajax event="expand" update=":treeform:contacttree" listener="#{contactsView.onNodeExpand}" />
+			        <p:ajax event="collapse" update=":treeform:contacttree" listener="#{contactsView.onNodeCollapse}" />
+			        <p:ajax event="select" update=":form:eventsDT" listener="#{contactsView.onNodeSelect}" />
+			        <p:ajax event="unselect" update=":treeform:contacttree" listener="#{contactsView.onNodeUnselect}" />
+			 		<p:ajax event="dragdrop" update=":treeform:contacttree,:treeform:treeDT,:form:eventsDT" listener="#{contactsView.onDragDrop}" />
+			 		
+			        <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+			            <h:outputText value="#{contact}"/>
+			        </p:treeNode>
+			        <p:treeNode type="document" icon="ui-icon-document">
+			            <h:outputText value="#{contact}" />
+			        </p:treeNode>
+			    </p:tree>
+			</h:form> 
+		</p:layoutUnit>
+		
+		<p:layoutUnit position="center">
+			<h:form id="form">
+				<p:growl id="msgs" showDetail="true"/>
+				
+				<p:dataTable id="eventsDT" var="contact" value="#{contactsView.contacts}" widgetVar="contactsTable" 
+					selectionMode="single" selection="#{contactsView.selectedContact}" rowKey="#{contact.id}"
+					 editable="true" lazy="true" style="margin-bottom:20px">
+				
+					<f:facet name="header">
+						
+					 	<h:panelGroup style="display:block; text-align:left">
+						 	<p:outputPanel>
+								<p:commandButton value="New" update="eventsDT,:treeform:treeDT" action="#{contactsView.addNewContact}" process="@this" />
+		        				<p:commandButton value="Show All" update="eventsDT,:treeform:treeDT" action="#{contactsView.showAllContact}" process="@this" />
+		        				<p:commandButton value="Search" oncomplete="PF('searchDialog').show()" />
+	            			</p:outputPanel>
+	                	</h:panelGroup>	
+					</f:facet>
+					
+					<p:ajax event="rowSelect" listener="#{contactsView.onRowSelect}" update=":form:contactDetail" oncomplete="PF('contactDialog').show()"/>
+					<p:ajax event="rowUnselect" listener="#{contactsView.onRowUnselect}" update=":form:msgs" />
+					
+        			<p:column headerText="Family Name">
+        					<h:outputText value="#{contact.familyName}" />
+        			</p:column>
+        			<p:column headerText="Middle Name">
+        					<h:outputText value="#{contact.middleName}" />
+        			</p:column>
+        			<p:column headerText="First Name">
+        					<h:outputText value="#{contact.firstName}" />
+        			</p:column>
+        			<p:column headerText="Group">
+        					<h:outputText value="#{contact.groupName}" />
+        			</p:column>
+        			<p:column headerText="Sentiment">
+        					<h:outputText value="#{contact.sentiment}" />
+        			</p:column>
+        			<p:column headerText="Status">
+        					<h:outputText value="#{contact.status == 1 ? 'active' : 'inactive'}" />
+        			</p:column>
+        			
+			   </p:dataTable>
+			   
+		       <p:dialog header="Contact Detail" widgetVar="contactDialog">
+			        <p:outputPanel id="contactDetail" style="text-align:center;">
+			            <p:panelGrid columns="2" columnClasses="label,value" style="width:500px">
+			            
+			            	<f:facet name="header">
+			            		<h:panelGroup style="display:block; text-align:right">								
+									<p:commandButton update="eventsDT,:treeform:treeDT" action="#{contactsView.deleteContact}" onclick="contactDialog.hide()" icon="ui-icon-trash" />
+								</h:panelGroup>	
+							</f:facet>	
+			            	
+							<h:panelGroup style="display:block; text-align:right">
+								<h:outputText value="Family Name: " />
+							</h:panelGroup>
+								<h:inputText value="#{contactsView.selectedContact.familyName}" style="width:100%">
+									<f:validateLength minimum="2" />
+								</h:inputText>
+							
+							<h:panelGroup style="display:block; text-align:right">
+								<h:outputText value="Middle Name: " />
+							</h:panelGroup>
+								<h:inputText value="#{contactsView.selectedContact.middleName}" style="width:100%" />
+								
+							<h:panelGroup style="display:block; text-align:right">
+								<h:outputText value="First Name: " />
+							</h:panelGroup>	
+								<h:inputText value="#{contactsView.selectedContact.firstName}" style="width:100%" />
+								
+							<h:panelGroup style="display:block; text-align:right">	
+								<h:outputText value="Group: " />
+							</h:panelGroup>
+            					<h:selectOneMenu value="#{contactsView.selectedContact.groupName}" style="width:100%">
+	            					<f:selectItems value="#{contactsView.groups}" var="group" itemLabel="#{group}" itemValue="#{group}" />
+            					</h:selectOneMenu>
+							
+							<h:panelGroup style="display:block; text-align:right">	
+								<h:outputText value="Sentiment: " />
+							</h:panelGroup>
+							    <h:selectOneMenu value="#{contactsView.selectedContact.sentiment}" style="width:100%">
+	            					<f:selectItems value="#{contactsView.sentiments}" var="sentiment" itemLabel="#{sentiment}" itemValue="#{sentiment}" />
+            					</h:selectOneMenu>
+            					
+							<h:panelGroup style="display:block; text-align:right">	
+								<h:outputText value="Mobile Phone: " />
+							</h:panelGroup>
+								<h:inputText value="#{contactsView.selectedContact.mobilePhone}" style="width:100%" />
+							
+							<h:panelGroup style="display:block; text-align:right">	
+								<h:outputText value="Home Email: " />
+							</h:panelGroup>
+								<h:inputText value="#{contactsView.selectedContact.homeEmail}" style="width:100%" />
+							
+							<h:panelGroup style="display:block; text-align:right">	
+								<h:outputText value="Street: " />
+							</h:panelGroup>
+								<h:inputText value="#{contactsView.selectedContact.street}" style="width:100%" />
+							
+							<h:panelGroup style="display:block; text-align:right">	
+								<h:outputText value="City: " />
+							</h:panelGroup>
+								<h:inputText value="#{contactsView.selectedContact.city}" style="width:100%" />
+							
+							<h:panelGroup style="display:block; text-align:right">	
+								<h:outputText value="Zip: " />
+							</h:panelGroup>
+								<h:inputText value="#{contactsView.selectedContact.zip}" style="width:100%" />
+								
+							<h:panelGroup style="display:block; text-align:right">	
+								<h:outputText value="Country: " />
+							</h:panelGroup>
+								<h:inputText value="#{contactsView.selectedContact.country}" style="width:100%" />
+							
+							<h:panelGroup style="display:block; text-align:right">	
+								<h:outputText value="Status: " />
+							</h:panelGroup>
+								<h:selectOneMenu value="#{contactsView.selectedContact.status}" style="width:100%">
+	            					<f:selectItem itemLabel="inactive" itemValue="0" />
+	            					<f:selectItem itemLabel="active" itemValue="1" />
+            					</h:selectOneMenu>
+							
+							<f:facet name="footer">
+								<h:panelGroup style="display:block; text-align:center">									
+									<p:commandButton value="Update" update="eventsDT,:treeform:treeDT" action="#{contactsView.updateContact}" onclick="contactDialog.hide()" icon="ui-icon-check"/>
+								</h:panelGroup>	
+							</f:facet>	
+			            </p:panelGrid>
+			        </p:outputPanel>
+			    </p:dialog>
+			    
+			    <p:dialog header="Search" widgetVar="searchDialog">
+			        <p:outputPanel id="searchPanel" style="text-align:center;">
+			            <p:panelGrid columns="2" columnClasses="label,value" style="width:500px">
+							
+							<h:panelGroup style="display:block; text-align:right">	
+								<h:outputText value="Group: " />
+							</h:panelGroup>
+            					<h:selectOneMenu value="#{contactsView.groupSearch}" style="width:100%">
+            						<f:selectItem itemLabel="All" itemValue="All" />
+	            					<f:selectItems value="#{contactsView.groups}" var="group" itemLabel="#{group}" itemValue="#{group}" />
+            					</h:selectOneMenu>
+							
+							<h:panelGroup style="display:block; text-align:right">	
+								<h:outputText value="Sentiment: " />
+							</h:panelGroup>
+							    <h:selectOneMenu value="#{contactsView.sentimentSearch}" style="width:100%">
+							    	<f:selectItem itemLabel="All" itemValue="All" />
+	            					<f:selectItems value="#{contactsView.sentiments}" var="sentiment" itemLabel="#{sentiment}" itemValue="#{sentiment}" />
+            					</h:selectOneMenu>
+							
+							<h:panelGroup style="display:block; text-align:right">	
+								<h:outputText value="Field Search: " />
+							</h:panelGroup>
+							    <h:selectOneMenu value="#{contactsView.fieldSearch}" style="width:100%">
+							    	<f:selectItem itemLabel="All" itemValue="All" />
+	            					<f:selectItems value="#{contactsView.fieldNames}" var="fieldName" itemLabel="#{fieldName}" itemValue="#{fieldName}" />
+            					</h:selectOneMenu>
+							
+							<h:panelGroup style="display:block; text-align:right">	
+								<h:outputText value="Key Search: " />
+							</h:panelGroup>
+								<h:inputText value="#{contactsView.keySearch}" style="width:100%" />
+								
+							<f:facet name="footer">								
+								<p:commandButton value="Search" update="eventsDT"  action="#{contactsView.searchContact}" onclick="searchDialog.hide()"/>
+							</f:facet>	
+			            </p:panelGrid>
+			        </p:outputPanel>
+			    </p:dialog>
+			</h:form>
+		</p:layoutUnit>
+	</p:layout>
+</h:body>
+</html>
