@@ -495,7 +495,8 @@ public class AddressBookUI extends UI {
 					} else if(valueSelected instanceof Contact) {
 				
 						Contact contactSelected = (Contact) valueSelected;
-						String textFilter = contactSelected.toString();
+						String textFilter = contactSelected.getGroupName() + " " + contactSelected.getSentiment()
+								+ " " + contactSelected.getFamilyName() + " " + contactSelected.getMiddleName() + " " + contactSelected.getFirstName();
 			
 						List<String> arrayFieldFilter = new ArrayList<String>();
 			
